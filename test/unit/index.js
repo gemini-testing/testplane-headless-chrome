@@ -40,7 +40,7 @@ describe('index', () => {
         const hermione = mkHermione_({browsers: {'foo-bar': browser}});
         const expectedBrowser = {
             desiredCapabilities: {
-                chromeOptions: {
+                'goog:chromeOptions': {
                     args: ['headless'],
                     binary: 'path/to/bin'
                 }
@@ -56,14 +56,14 @@ describe('index', () => {
 
     it('should union Chrome options for passed browser', async () => {
         const browser = {desiredCapabilities: {
-            chromeOptions: {
+            'goog:chromeOptions': {
                 args: ['some-arg']
             }
         }};
         const hermione = mkHermione_({browsers: {'foo-bar': browser}});
         const expectedBrowser = {
             desiredCapabilities: {
-                chromeOptions: {
+                'goog:chromeOptions': {
                     args: ['some-arg', 'headless'],
                     binary: 'path/to/bin'
                 }
