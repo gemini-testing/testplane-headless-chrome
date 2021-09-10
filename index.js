@@ -21,7 +21,7 @@ module.exports = async (hermione, opts) => {
             const chromiumPath = await downloadChromiumByVersion(version, cachePath, downloadAttempts);
             const {desiredCapabilities} = browser;
 
-            desiredCapabilities.chromeOptions = _.mergeWith(desiredCapabilities.chromeOptions, {
+            desiredCapabilities['goog:chromeOptions'] = _.mergeWith(desiredCapabilities['goog:chromeOptions'], {
                 args: ['headless'],
                 binary: chromiumPath
             }, (objValue) => {
