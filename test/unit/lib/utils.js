@@ -91,6 +91,19 @@ describe('lib/utils', () => {
             assert.isUndefined(revision);
         });
 
+        it('should read from hot cache file if version was not found in static file', async () => {
+            const readJSON = sinon.stub(fs, 'readJSON');
+
+            sinon.stub(path, 'resolve').resolves();
+            sinon.stub(fs, 'existsSync').resolves();
+            readJSON.onFirstCall().resolves({'some-os': {'76': 6525}});
+            readJSON.onSecondCall().resolves({'some-os': {'106': 1036822}});
+
+            const revision = await utils.getSavedRevision('some-os', '106');
+
+            assert.equal(revision, 1036822);
+        });
+
         it('should throws if could not read Chromium revisions file', () => {
             sinon.stub(path, 'resolve').resolves();
             sinon.stub(fs, 'readJSON').rejects();
@@ -178,6 +191,28 @@ describe('lib/utils', () => {
             const revision = await utils.getRevision('some-os', '75');
 
             assert.equal(revision, 6335);
+        });
+    });
+
+    describe('revisions cache file', () => {
+        it('should save revision to file', async () => {
+            const writeJsonStub = sinon.stub(fs, 'writeJSON');
+
+            await utils.saveRevision('some-os', '106', '1036822', '/cache/path');
+
+            assert.calledOnceWith(writeJsonStub, '/cache/path/revisions.json', {'some-os': {'106': '1036822'}});
+        });
+
+        it('should read revision from file', async () => {
+            const readJSON = sinon.stub(fs, 'readJSON');
+
+            sinon.stub(fs, 'existsSync').resolves();
+            readJSON.onFirstCall().resolves({'some-os': {'75': '6335'}});
+            readJSON.onSecondCall().resolves({'some-os': {'106': '1036822'}});
+
+            const revision = await utils.getSavedRevision('some-os', '106', 'cache/path');
+
+            assert.equal(revision, 1036822);
         });
     });
 });
