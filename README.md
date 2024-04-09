@@ -34,11 +34,20 @@ Add plugin to your `hermione` config file:
 ```js
 module.exports = {
     // ...
+    browsers: {
+        'example-browser-id': {
+            desiredCapabilities: {
+                browserName: 'chrome',
+                browserVersion: '123.0'
+            }
+        }
+    },
+    // ...
     plugins: {
         'hermione-headless-chrome': {
             enabled: true,
             browserId: 'example-browser-id',
-            version: '76'
+            version: '123'
         }
     },
     //...
