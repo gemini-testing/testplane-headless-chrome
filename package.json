@@ -1,7 +1,7 @@
 {
-  "name": "hermione-headless-chrome",
-  "version": "1.1.1",
-  "description": "Plugin for hermione to run integration tests on headless Chromium",
+  "name": "@testplane/headless-chrome",
+  "version": "0.0.1",
+  "description": "Plugin for Testplane to run integration tests on headless Chromium",
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
@@ -11,9 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gemini-testing/hermione-headless-chrome.git"
+    "url": "git+https://github.com/gemini-testing/testplane-headless-chrome.git"
   },
   "keywords": [
+    "testplane",
     "hermione",
     "plugin",
     "headless",
@@ -22,9 +23,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gemini-testing/hermione-headless-chrome/issues"
+    "url": "https://github.com/gemini-testing/testplane-headless-chrome/issues"
   },
-  "homepage": "https://github.com/gemini-testing/hermione-headless-chrome#readme",
+  "homepage": "https://github.com/gemini-testing/testplane-headless-chrome#readme",
   "devDependencies": {
     "app-module-path": "^2.2.0",
     "chai": "^4.2.0",
