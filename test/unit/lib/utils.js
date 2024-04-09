@@ -22,7 +22,7 @@ describe('lib/utils', () => {
         it('should return process "platform" if it is not "darwin" or "win32"', () => {
             sinon.stub(process, 'platform').value('some-platform');
 
-            const osName = utils.getOSName();
+            const osName = utils.getPlatformName();
 
             assert.equal(osName, 'some-platform');
         });
@@ -30,39 +30,45 @@ describe('lib/utils', () => {
         it('should return "mac" if "platform" is "darwin', () => {
             sinon.stub(process, 'platform').value('darwin');
 
-            const osName = utils.getOSName();
+            const osName = utils.getPlatformName();
 
             assert.equal(osName, 'mac');
         });
 
-        it('should return "win64" if "platform" is "win32" and "arch" is "x64"', () => {
+        it('should return "Windows" if "platform" is "win32" and "arch" is "x64"', () => {
             sinon.stub(process, 'platform').value('win32');
             sinon.stub(process, 'arch').value('x64');
 
-            const osName = utils.getOSName();
+            const osName = utils.getPlatformName();
 
-            assert.equal(osName, 'win64');
+            assert.equal(osName, 'Windows');
         });
 
-        it('should return "win" if "platform" is "win32" and "arch" is not "64"', () => {
+        it('should return "Win32" if "platform" is "win32" and "arch" is not "64"', () => {
             sinon.stub(process, 'platform').value('win32');
             sinon.stub(process, 'arch').value('x32');
 
-            const osName = utils.getOSName();
+            const osName = utils.getPlatformName();
 
-            assert.equal(osName, 'win');
+            assert.equal(osName, 'Win32');
         });
     });
 
     describe('get last stable major', () => {
-        it('should return last major for passed OS', async () => {
+        it('should return major info for passed OS', async () => {
             got.resolves({body: [{
-                versions: [{'current_version': '76.0.120.5'}]
+                milestone: 76,
+                version: '76.0.120.5',
+                chromium_main_branch_position: 123 // eslint-disable-line camelcase
             }]});
 
-            const major = await utils.getLastStableMajor('mac');
+            const majorInfo = await utils.getLastStableMajor('mac');
 
-            assert.equal(major, '76');
+            assert.deepEqual(majorInfo, {
+                major: 76,
+                version: '76.0.120.5',
+                revision: 123
+            });
         });
 
         it('should throw if request was failed', () => {
@@ -112,43 +118,31 @@ describe('lib/utils', () => {
         });
     });
 
-    describe('request revision', () => {
-        it('should return revision from request for passed full version', async () => {
-            got.resolves({body: {'chromium_base_position': '6225'}});
-
-            const revision = await utils.requestRevision('76.0.130.5');
-
-            assert.equal(revision, 6225);
-        });
-
-        it('should throws if request was failed', () => {
-            got.rejects();
-
-            assert.isRejected(utils.requestRevision('76.0.130.5'), /Could not get Chromium revision/);
-        });
-    });
-
     describe('get stable versions for passed OS', () => {
-        it('should return array of versions', async () => {
+        it('should return array of releases', async () => {
             got.resolves({body: [
-                {version: '74.0.100.3'}, {version: '75.0.110.2'}
+                {version: '74.0.100.3', chromium_main_branch_position: 123}, // eslint-disable-line camelcase
+                {version: '75.0.110.2', chromium_main_branch_position: 124} // eslint-disable-line camelcase
             ]});
 
-            const versions = await utils.getStableVersions('os');
+            const releases = await utils.getStableReleases('os');
 
-            assert.deepEqual(versions, ['75.0.110.2', '74.0.100.3']);
+            assert.deepEqual(releases, [
+                {version: '75.0.110.2', revision: 124},
+                {version: '74.0.100.3', revision: 123}
+            ]);
         });
 
         it('should throws if request was failed', () => {
             got.rejects();
 
-            assert.isRejected(utils.getStableVersions('os'), /Could not get Chromium full versions/);
+            assert.isRejected(utils.getStableReleases('os'), /Could not get Chromium full versions/);
         });
 
         it('should throws if request return empty array', () => {
             got.resolves({body: []});
 
-            assert.isRejected(utils.getStableVersions('os'), /is unsupported for downloading Chromium/);
+            assert.isRejected(utils.getStableReleases('os'), /is unsupported for downloading Chromium/);
         });
     });
 
@@ -184,13 +178,13 @@ describe('lib/utils', () => {
             sinon.stub(path, 'resolve').resolves();
             sinon.stub(fs, 'readJSON').resolves({'some-os': {}});
             got.onFirstCall().resolves({body: [
-                {version: '74.0.100.3'}, {version: '75.0.110.2'}
+                {version: '74.0.100.3', chromium_main_branch_position: 123}, // eslint-disable-line camelcase
+                {version: '75.0.110.2', chromium_main_branch_position: 124} // eslint-disable-line camelcase
             ]});
-            got.onSecondCall().resolves({body: {'chromium_base_position': '6335'}});
 
             const revision = await utils.getRevision('some-os', '75');
 
-            assert.equal(revision, 6335);
+            assert.equal(revision, 124);
         });
     });
 
