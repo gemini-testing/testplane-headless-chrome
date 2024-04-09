@@ -1,6 +1,6 @@
 {
   "name": "@testplane/headless-chrome",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Plugin for Testplane to run integration tests on headless Chromium",
   "main": "index.js",
   "scripts": {
