@@ -1,6 +1,6 @@
 {
   "name": "hermione-headless-chrome",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Plugin for hermione to run integration tests on headless Chromium",
   "main": "index.js",
   "scripts": {
