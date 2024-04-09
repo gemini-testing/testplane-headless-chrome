@@ -17,7 +17,7 @@ describe('lib/download-chromium-by-version', () => {
         downloadChromiumByVersion = proxyquire('lib/download-chromium-by-version', {
             'download-chromium': downloadChromium,
             './utils': {
-                getOSName: sinon.stub().resolves('some-os'),
+                getPlatformName: sinon.stub().resolves('some-os'),
                 getRevision: sinon.stub().resolves('6225'),
                 saveRevision
             }
